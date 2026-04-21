@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="8osa.csproj">
+    <Deploy />
+  </Project>
+</Solution>
