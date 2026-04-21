@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using _8osa.Resources.Localization;
+using System.Globalization;
 
 namespace _8osa.Services
 {
@@ -6,21 +7,19 @@ namespace _8osa.Services
     {
         public static event Action? LanguageChanged;
 
-        private static string _currentLanguage = "en";
-        public static string CurrentLanguage => _currentLanguage;
-
         public static void ChangeLanguage(string languageCode)
         {
-            _currentLanguage = languageCode;
             var culture = new CultureInfo(languageCode);
             CultureInfo.DefaultThreadCurrentCulture = culture;
             CultureInfo.DefaultThreadCurrentUICulture = culture;
+
+            AppResources.Culture = culture;
 
             Preferences.Set("AppLanguage", languageCode);
             LanguageChanged?.Invoke();
         }
 
-        public static void LoadSavedLanguage()
+        public static void LoadSaved()
         {
             var saved = Preferences.Get("AppLanguage", "en");
             ChangeLanguage(saved);
