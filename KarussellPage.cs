@@ -25,6 +25,7 @@ public class KarussellPage : ContentPage
     private Label _hintLabel;
     private Button _btnEn;
     private Button _btnEt;
+    private Button _btnRUS;
 
     private readonly List<CarouselItem> _data = new()
     {
@@ -108,9 +109,20 @@ public class KarussellPage : ContentPage
             TextColor = Color.FromArgb("#8888AA"),
             FontSize = 14
         };
+        _btnRUS = new Button
+        {
+            Text = "🇷🇺 RUS",
+            CornerRadius = 20,
+            Padding = new Thickness(20, 8),
+            BackgroundColor = Color.FromArgb("#2A2A4A"),
+            TextColor = Color.FromArgb("#8888AA"),
+            FontSize = 14
+        };
 
         _btnEn.Clicked += (s, e) => LanguageService.ChangeLanguage("en");
         _btnEt.Clicked += (s, e) => LanguageService.ChangeLanguage("et");
+
+        _btnRUS.Clicked += (s, e) => LanguageService.ChangeLanguage("ru");
 
         LanguageService.LanguageChanged += OnLanguageChanged;
 
@@ -118,7 +130,7 @@ public class KarussellPage : ContentPage
         {
             HorizontalOptions = LayoutOptions.Center,
             Spacing = 10,
-            Children = { _btnEn, _btnEt }
+            Children = { _btnEn, _btnEt, _btnRUS }
         };
 
         var indicatorView = new IndicatorView
@@ -276,8 +288,10 @@ public class KarussellPage : ContentPage
         string lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
         _btnEn.BackgroundColor = lang == "en" ? Color.FromArgb("#A78BFA") : Color.FromArgb("#2A2A4A");
         _btnEt.BackgroundColor = lang == "et" ? Color.FromArgb("#A78BFA") : Color.FromArgb("#2A2A4A");
+        _btnRUS.BackgroundColor = lang == "rus" ? Color.FromArgb("#A78BFA") : Color.FromArgb("#2A2A4A");
         _btnEn.TextColor = lang == "en" ? Colors.White : Color.FromArgb("#8888AA");
         _btnEt.TextColor = lang == "et" ? Colors.White : Color.FromArgb("#8888AA");
+        _btnRUS.TextColor = lang == "rus" ? Colors.White : Color.FromArgb("#8888AA");
 
         // Uuenda kaardid
         var temp = _items.ToList();

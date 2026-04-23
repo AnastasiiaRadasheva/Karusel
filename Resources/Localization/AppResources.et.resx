@@ -135,6 +135,9 @@
   <data name="Csharp_Detail" xml:space="preserve">
     <value>Looja: Bjarne Stroustrup. Kasutatakse: mängud, OS, brauserid</value>
   </data>
+  <data name="HelloWorldLabel" xml:space="preserve">
+    <value>Hello World:</value>
+  </data>
   <data name="Java_Desc" xml:space="preserve">
     <value>Kirjuta kord, käivita igal pool</value>
   </data>
