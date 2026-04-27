@@ -7,14 +7,15 @@ namespace _8osa;
 
 public class KarussellPage : ContentPage
 {
+
     public class CarouselItem
     {
         public string Name { get; set; }
         public string ImageUrl { get; set; }
         public string HelloWorld { get; set; }
         public string CreatedYear { get; set; }
-        public Func<string> GetDesc { get; set; }
-        public Func<string> GetDetail { get; set; }
+        public string Desc { get; set; }
+        public string Detail { get; set; }
     }
 
     private CarouselView _carousel;
@@ -27,7 +28,7 @@ public class KarussellPage : ContentPage
     private Button _btnEt;
     private Button _btnRUS;
 
-    private readonly List<CarouselItem> _data = new()
+    private List<CarouselItem> BuildData() => new()
     {
         new CarouselItem
         {
@@ -35,8 +36,8 @@ public class KarussellPage : ContentPage
             ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Logo_C_sharp.svg/120px-Logo_C_sharp.svg.png",
             HelloWorld = "Console.WriteLine(\"Hello, World!\");",
             CreatedYear = "2000",
-            GetDesc   = () => AppResources.Csharp_Desc,
-            GetDetail = () => AppResources.Csharp_Detail
+            Desc   = AppResources.Csharp_Desc,
+            Detail = AppResources.Csharp_Detail
         },
         new CarouselItem
         {
@@ -44,8 +45,8 @@ public class KarussellPage : ContentPage
             ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/120px-Python-logo-notext.svg.png",
             HelloWorld = "print(\"Hello, World!\")",
             CreatedYear = "1991",
-            GetDesc   = () => AppResources.Python_Desc,
-            GetDetail = () => AppResources.Python_Detail
+            Desc   = AppResources.Python_Desc,
+            Detail = AppResources.Python_Detail
         },
         new CarouselItem
         {
@@ -53,8 +54,8 @@ public class KarussellPage : ContentPage
             ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/120px-Unofficial_JavaScript_logo_2.svg.png",
             HelloWorld = "console.log(\"Hello, World!\");",
             CreatedYear = "1995",
-            GetDesc   = () => AppResources.JS_Desc,
-            GetDetail = () => AppResources.JS_Detail
+            Desc   = AppResources.JS_Desc,
+            Detail = AppResources.JS_Detail
         },
         new CarouselItem
         {
@@ -62,8 +63,8 @@ public class KarussellPage : ContentPage
             ImageUrl = "https://upload.wikimedia.org/wikipedia/en/thumb/3/30/Java_programming_language_logo.svg/120px-Java_programming_language_logo.svg.png",
             HelloWorld = "System.out.println(\"Hello, World!\");",
             CreatedYear = "1995",
-            GetDesc   = () => AppResources.Java_Desc,
-            GetDetail = () => AppResources.Java_Detail
+            Desc   = AppResources.Java_Desc,
+            Detail = AppResources.Java_Detail
         },
         new CarouselItem
         {
@@ -71,15 +72,15 @@ public class KarussellPage : ContentPage
             ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/ISO_C%2B%2B_Logo.svg/120px-ISO_C%2B%2B_Logo.svg.png",
             HelloWorld = "std::cout << \"Hello, World!\";",
             CreatedYear = "1985",
-            GetDesc   = () => AppResources.Cpp_Desc,
-            GetDetail = () => AppResources.Cpp_Detail
+            Desc   = AppResources.Cpp_Desc,
+            Detail = AppResources.Cpp_Detail
         }
     };
 
     public KarussellPage()
     {
         BackgroundColor = Color.FromArgb("#0F0F1A");
-        _items = new ObservableCollection<CarouselItem>(_data);
+        _items = new ObservableCollection<CarouselItem>(BuildData());
 
         _titleLabel = new Label
         {
@@ -91,38 +92,26 @@ public class KarussellPage : ContentPage
             Margin = new Thickness(0, 16, 0, 0)
         };
 
-        _btnEn = new Button
-        {
-            Text = "🇬🇧 EN",
-            CornerRadius = 20,
-            Padding = new Thickness(20, 8),
-            BackgroundColor = Color.FromArgb("#A78BFA"),
-            TextColor = Colors.White,
-            FontSize = 14
-        };
-        _btnEt = new Button
-        {
-            Text = "🇪🇪 ET",
-            CornerRadius = 20,
-            Padding = new Thickness(20, 8),
-            BackgroundColor = Color.FromArgb("#2A2A4A"),
-            TextColor = Color.FromArgb("#8888AA"),
-            FontSize = 14
-        };
-        _btnRUS = new Button
-        {
-            Text = "🇷🇺 RUS",
-            CornerRadius = 20,
-            Padding = new Thickness(20, 8),
-            BackgroundColor = Color.FromArgb("#2A2A4A"),
-            TextColor = Color.FromArgb("#8888AA"),
-            FontSize = 14
-        };
+        _btnEn = MakeLangButton("🇬🇧 EN");
+        _btnEt = MakeLangButton("🇪🇪 ET");
+        _btnRUS = MakeLangButton("🇷🇺 RUS");
+        SetActiveButton(_btnEn);
 
-        _btnEn.Clicked += (s, e) => LanguageService.ChangeLanguage("en");
-        _btnEt.Clicked += (s, e) => LanguageService.ChangeLanguage("et");
-
-        _btnRUS.Clicked += (s, e) => LanguageService.ChangeLanguage("ru");
+        _btnEn.Clicked += async (s, e) =>
+        {
+            await AnimateButton(_btnEn);
+            LanguageService.ChangeLanguage("en");
+        };
+        _btnEt.Clicked += async (s, e) =>
+        {
+            await AnimateButton(_btnEt);
+            LanguageService.ChangeLanguage("et");
+        };
+        _btnRUS.Clicked += async (s, e) =>
+        {
+            await AnimateButton(_btnRUS);
+            LanguageService.ChangeLanguage("ru");
+        };
 
         LanguageService.LanguageChanged += OnLanguageChanged;
 
@@ -145,14 +134,14 @@ public class KarussellPage : ContentPage
         _carousel = new CarouselView
         {
             ItemsSource = _items,
-            HeightRequest = 380,
+            HeightRequest = 420,
             PeekAreaInsets = new Thickness(30, 0, 30, 0),
             IndicatorView = indicatorView,
             ItemTemplate = new DataTemplate(() =>
             {
                 var frame = new Frame
                 {
-                    CornerRadius = 20,
+                    CornerRadius = 24,
                     HasShadow = true,
                     Padding = 0,
                     Margin = new Thickness(8),
@@ -164,7 +153,7 @@ public class KarussellPage : ContentPage
                 {
                     RowDefinitions =
                     {
-                        new RowDefinition { Height = new GridLength(180) },
+                        new RowDefinition { Height = new GridLength(200) },
                         new RowDefinition { Height = GridLength.Auto }
                     }
                 };
@@ -188,18 +177,42 @@ public class KarussellPage : ContentPage
                 };
                 Grid.SetRow(fadeBox, 0);
 
-                var nameLabel = new Label { TextColor = Colors.White, FontSize = 22, FontAttributes = FontAttributes.Bold };
+                var nameLabel = new Label
+                {
+                    TextColor = Colors.White,
+                    FontSize = 22,
+                    FontAttributes = FontAttributes.Bold
+                };
                 nameLabel.SetBinding(Label.TextProperty, "Name");
 
-                var descLabel = new Label { TextColor = Color.FromArgb("#BBBBCC"), FontSize = 13 };
+                var descLabel = new Label
+                {
+                    TextColor = Color.FromArgb("#BBBBCC"),
+                    FontSize = 13,
+                    LineBreakMode = LineBreakMode.WordWrap,
+                    MaxLines = 3
+                };
+                descLabel.SetBinding(Label.TextProperty, "Desc");
+
                 var yearLabel = new Label { TextColor = Color.FromArgb("#A78BFA"), FontSize = 12 };
                 yearLabel.SetBinding(Label.TextProperty, new Binding("CreatedYear", stringFormat: "📅 {0}"));
+
+                var helloLabel = new Label
+                {
+                    TextColor = Color.FromArgb("#A78BFA"),
+                    FontSize = 11,
+                    FontFamily = "Courier New",
+                    BackgroundColor = Color.FromArgb("#0F0F1A"),
+                    Padding = new Thickness(8, 4),
+                    LineBreakMode = LineBreakMode.NoWrap
+                };
+                helloLabel.SetBinding(Label.TextProperty, "HelloWorld");
 
                 var infoStack = new VerticalStackLayout
                 {
                     Padding = new Thickness(20, 10, 20, 20),
                     Spacing = 6,
-                    Children = { nameLabel, descLabel, yearLabel }
+                    Children = { nameLabel, descLabel, yearLabel, helloLabel }
                 };
                 Grid.SetRow(infoStack, 1);
 
@@ -208,22 +221,28 @@ public class KarussellPage : ContentPage
                 grid.Children.Add(infoStack);
                 frame.Content = grid;
 
-                // Täida kirjeldus kui kaart ilmub
-                frame.BindingContextChanged += (s, e) =>
+                frame.BindingContextChanged += async (s, e) =>
                 {
-                    if (frame.BindingContext is CarouselItem item)
-                        descLabel.Text = item.GetDesc();
+                    if (frame.BindingContext is CarouselItem)
+                    {
+                        frame.Opacity = 0;
+                        await frame.FadeToAsync(1, 400, Easing.CubicOut);
+                    }
                 };
 
-                // Klikk -> DisplayAlert
                 var tap = new TapGestureRecognizer();
                 tap.Tapped += async (s, e) =>
                 {
                     if (_carousel.CurrentItem is CarouselItem item)
                     {
-                        await DisplayAlert(
+                        await frame.ScaleTo(0.95, 80, Easing.CubicIn);
+                        await frame.ScaleTo(1.0, 120, Easing.CubicOut);
+
+                        await DisplayAlertAsync(
                             item.Name,
-                            $"{AppResources.HelloWorldLabel}\n{item.HelloWorld}\n\n{AppResources.Created} {item.CreatedYear}\n\n{item.GetDetail()}",
+                            $"{AppResources.HelloWorldLabel}\n{item.HelloWorld}" +
+                            $"\n\n{AppResources.Created} {item.CreatedYear}" +
+                            $"\n\n{item.Detail}",
                             AppResources.OK
                         );
                     }
@@ -252,9 +271,9 @@ public class KarussellPage : ContentPage
                 EndPoint = new Point(1, 0),
                 GradientStops = new GradientStopCollection
                 {
-                    new GradientStop(Colors.Transparent, 0),
+                    new GradientStop(Colors.Transparent, 0f),
                     new GradientStop(Color.FromArgb("#A78BFA"), 0.5f),
-                    new GradientStop(Colors.Transparent, 1)
+                    new GradientStop(Colors.Transparent, 1f)
                 }
             }
         };
@@ -279,24 +298,49 @@ public class KarussellPage : ContentPage
         _timer.Start();
     }
 
+    private static Button MakeLangButton(string text) => new Button
+    {
+        Text = text,
+        CornerRadius = 20,
+        Padding = new Thickness(20, 8),
+        BackgroundColor = Color.FromArgb("#2A2A4A"),
+        TextColor = Color.FromArgb("#8888AA"),
+        FontSize = 14
+    };
+
+    private static void SetActiveButton(Button btn)
+    {
+        btn.BackgroundColor = Color.FromArgb("#A78BFA");
+        btn.TextColor = Colors.White;
+    }
+
+    private static void SetInactiveButton(Button btn)
+    {
+        btn.BackgroundColor = Color.FromArgb("#2A2A4A");
+        btn.TextColor = Color.FromArgb("#8888AA");
+    }
+
+    private static async Task AnimateButton(Button btn)
+    {
+        await btn.ScaleToAsync(0.9, 80);
+        await btn.ScaleToAsync(1.0, 80);
+    }
+
     private void OnLanguageChanged()
     {
-        // Uuenda staatilised tekstid resx kaudu
         _titleLabel.Text = AppResources.AppTitle;
         _hintLabel.Text = AppResources.TapHint;
 
         string lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-        _btnEn.BackgroundColor = lang == "en" ? Color.FromArgb("#A78BFA") : Color.FromArgb("#2A2A4A");
-        _btnEt.BackgroundColor = lang == "et" ? Color.FromArgb("#A78BFA") : Color.FromArgb("#2A2A4A");
-        _btnRUS.BackgroundColor = lang == "rus" ? Color.FromArgb("#A78BFA") : Color.FromArgb("#2A2A4A");
-        _btnEn.TextColor = lang == "en" ? Colors.White : Color.FromArgb("#8888AA");
-        _btnEt.TextColor = lang == "et" ? Colors.White : Color.FromArgb("#8888AA");
-        _btnRUS.TextColor = lang == "rus" ? Colors.White : Color.FromArgb("#8888AA");
+        SetInactiveButton(_btnEn);
+        SetInactiveButton(_btnEt);
+        SetInactiveButton(_btnRUS);
+        if (lang == "en") SetActiveButton(_btnEn);
+        if (lang == "et") SetActiveButton(_btnEt);
+        if (lang == "ru") SetActiveButton(_btnRUS);
 
-        // Uuenda kaardid
-        var temp = _items.ToList();
         _items.Clear();
-        foreach (var item in temp)
+        foreach (var item in BuildData())
             _items.Add(item);
     }
 
